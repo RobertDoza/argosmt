@@ -1,5 +1,11 @@
 #include "graph_lex_minimal_constraint_handler.hpp"
 
+namespace {
+    void log_message(const std::string& msg) {
+        std::cout << msg << std::endl;
+    }
+}
+
 graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_theory_solver * th, const expression & l_pos, const expression & l_neg)
   :constraint_handler(th, l_pos, l_neg),
    _common_data(&th->_graph_lex_minimal_common_data),
