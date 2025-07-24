@@ -11,6 +11,7 @@ graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_t
    _common_data(&th->_graph_lex_minimal_common_data),
    _next_to_assert(0)
 {
+    log_message("LexMin constraint handler constructor called");
   _common_data->_instance_count++;
   const expression_vector & ops = _constraint->get_operands();
   csp_theory_solver::csp_theory_solver_data * cons_data = _theory_solver->get_theory_solver_data(_constraint);
@@ -28,12 +29,14 @@ graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_t
 
 void graph_lex_minimal_constraint_handler::new_level()
   {
+    log_message("LexMin constraint handler new_level() called");
     _trail.new_level();
     // TODO
   }
   
 void graph_lex_minimal_constraint_handler::backjump(unsigned level)
   {
+    log_message("LexMin constraint handler backjump() called");
     assert(level < _trail.current_level());
     _trail.backjump(level);
     _next_to_assert = _trail.size();
@@ -42,6 +45,7 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level)
     
 void graph_lex_minimal_constraint_handler::assert_literal(const expression & l)
   {   
+    log_message("LexMin constraint handler assert_literal() called");
     if(_theory_solver->get_solver().is_conflict())
       return;
     
@@ -54,6 +58,7 @@ void graph_lex_minimal_constraint_handler::assert_literal(const expression & l)
   
 void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer)
   {
+    log_message("LexMin constraint handler check_and_propagate() called");
     if(_theory_solver->get_solver().is_conflict())
       {
 	return;
@@ -85,29 +90,34 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer)
     
 void graph_lex_minimal_constraint_handler::explain_literal(const expression & l)
   {
+    log_message("LexMin constraint handler explain_literal() called");
     // TODO
   }
 
 int graph_lex_minimal_constraint_handler::get_variable_value_hint(const expression & var)
   {
+    log_message("LexMin constraint handler get_variable_value_hint() called");
     // DO NOTHING
     return 0; 
   }
   
 bool graph_lex_minimal_constraint_handler::is_weaker_from_pos(const expression & c)
   {
+    log_message("LexMin constraint handler is_weaker_from_pos() called");
     // DO NOTHING
     return false; 
   }
   
 bool graph_lex_minimal_constraint_handler::is_weaker_from_neg(const expression & c)
   {
+    log_message("LexMin constraint handler is_weaker_from_neg() called");
     // DO NOTHING
     return false; 
   }
   
 void graph_lex_minimal_constraint_handler::check_implied()
   {
+    log_message("LexMin constraint handler check_implied() called");
     // DO NOTHING
   }
 
