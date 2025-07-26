@@ -18,4 +18,5 @@ Makefile.in
 aclocal.m4
 configure
 src/**/Makefile.in
+**/.dirstamp
 
