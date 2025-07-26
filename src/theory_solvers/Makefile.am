@@ -1,9 +1,12 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CXXFLAGS = -I$(top_srcdir)/src/auxiliary/ \
 	      -I$(top_srcdir)/src/expression_library/ \
 	      -I$(top_srcdir)/src/data_structures/ \
 	      -I$(top_srcdir)/src/solver/ \
 	      -I$(top_srcdir)/src/strategies/ \
 	      -I$(top_srcdir)/src/quantifiers/ \
+          -I$(top_srcdir)/src/theory_solvers/graph_lex_minimal_algorithm \
 	      -I$(top_srcdir)/src/
 
 noinst_LIBRARIES = libtheorysolvers.a
@@ -16,7 +19,13 @@ libtheorysolvers_a_SOURCES = clause_theory_solver.cpp \
 		        alldiff_constraint_handler.cpp \
 	                bipartite_graph.cpp \
 	                sum_constraint_handler.cpp \
-	                graph_lex_minimal_constraint_handler.cpp
+	                graph_lex_minimal_constraint_handler.cpp \
+                    graph_lex_minimal_algorithm/adjacency_matrix_entry.cpp \
+                    graph_lex_minimal_algorithm/adjacency_matrix.cpp \
+                    graph_lex_minimal_algorithm/permutation.cpp \
+                    graph_lex_minimal_algorithm/partition_triple.cpp \
+                    graph_lex_minimal_algorithm/general_ordered_partition.cpp \
+                    graph_lex_minimal_algorithm/min_checker.cpp
 
 noinst_HEADERS = theory_solver.hpp \
 		 clause_theory_solver.hpp \
