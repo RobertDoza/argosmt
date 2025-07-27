@@ -25,7 +25,8 @@ libtheorysolvers_a_SOURCES = clause_theory_solver.cpp \
                     graph_lex_minimal_algorithm/permutation.cpp \
                     graph_lex_minimal_algorithm/partition_triple.cpp \
                     graph_lex_minimal_algorithm/general_ordered_partition.cpp \
-                    graph_lex_minimal_algorithm/min_checker.cpp
+                    graph_lex_minimal_algorithm/min_checker.cpp \
+                    graph_lex_minimal_algorithm/edge_literal.cpp
 
 noinst_HEADERS = theory_solver.hpp \
 		 clause_theory_solver.hpp \
