@@ -25,3 +25,6 @@ unsigned Permutation::operator()(unsigned x) const {
     return permuted_elements[x];
 }
 
+std::pair<unsigned, unsigned> Permutation::operator()(const std::pair<unsigned, unsigned>& pair) const {
+    return {permuted_elements[pair.first], permuted_elements[pair.second]};
+}

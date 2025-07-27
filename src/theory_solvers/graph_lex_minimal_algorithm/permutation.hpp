@@ -13,6 +13,7 @@ struct Permutation {
     Permutation(const std::vector<unsigned>& elems);
     std::string to_string() const;
     unsigned operator()(unsigned x) const;
+    std::pair<unsigned, unsigned> operator()(const std::pair<unsigned, unsigned>& pair) const;
 };
 
 #endif
