@@ -360,3 +360,54 @@ bool is_indicator_pair(const std::pair<unsigned, unsigned>& vertex_pair, const A
     return true;
 }
 
+std::vector<EdgeLiteral> create_clause(const AdjacencyMatrix& graph, const Permutation& permutation, const std::pair<unsigned, unsigned>& indicator_pair) {
+    Permutation inverse_permutation = permutation.get_inverse_permutation();
+    AdjacencyMatrix permuted_graph = graph.permute(permutation);
+
+    auto permutes_into_itself = [permutation](const std::pair<unsigned, unsigned>& pair) -> bool {
+        std::pair<unsigned, unsigned> permuted = {permutation(pair.first), permutation(pair.second)};
+        if (pair.first == permuted.first && pair.second == permuted.second) {
+            return true;
+        }
+
+        if (pair.first == permuted.second && pair.second == permuted.first) {
+            return true;
+        }
+
+        return false;
+    };
+
+    std::vector<EdgeLiteral> literals_to_return;
+
+    auto examine_pair = [&graph, &permuted_graph, &inverse_permutation, &literals_to_return](const std::pair<unsigned, unsigned>& pair) -> void {
+        if (graph.get_entry(pair.first, pair.second) == AdjacencyMatrixEntry::One) {
+            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, pair});
+        }
+
+        if (permuted_graph.get_entry(pair.first, pair.second) == AdjacencyMatrixEntry::Zero) {
+            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, inverse_permutation(pair)});
+        }
+    };
+
+    for (unsigned i_prime = 0; i_prime < indicator_pair.first; i_prime++) {
+        for (unsigned j_prime = i_prime + 1; j_prime < graph.get_dimension(); j_prime++) {
+            if (permutes_into_itself({i_prime, j_prime})) {
+                continue;
+            }
+            examine_pair({i_prime, j_prime});
+        }
+    }
+
+    for (unsigned j_prime = indicator_pair.first + 1; j_prime < indicator_pair.second; j_prime++) {
+        if (permutes_into_itself({indicator_pair.first, j_prime})) {
+            continue;
+        }
+        examine_pair({indicator_pair.first, j_prime});
+    }
+
+    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, indicator_pair});
+    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, inverse_permutation(indicator_pair)});
+
+    return literals_to_return;
+}
+

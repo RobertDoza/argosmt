@@ -6,6 +6,7 @@
 #include "permutation.hpp"
 #include "adjacency_matrix.hpp"
 #include "general_ordered_partition.hpp"
+#include "edge_literal.hpp"
 
 #define LOG
 
@@ -32,6 +33,7 @@ class MinChecker {
 
 bool is_critical(const std::pair<unsigned, unsigned>& vertex_pair, const AdjacencyMatrix& G, const Permutation& p);
 bool is_indicator_pair(const std::pair<unsigned, unsigned>& vertex_pair, const AdjacencyMatrix& G, const Permutation& p);
+std::vector<EdgeLiteral> create_clause(const AdjacencyMatrix& graph, const Permutation& permutation, const std::pair<unsigned, unsigned>& indicator_pair);
 
 #endif
 
