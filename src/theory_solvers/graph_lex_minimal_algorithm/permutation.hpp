@@ -14,6 +14,7 @@ struct Permutation {
     std::string to_string() const;
     unsigned operator()(unsigned x) const;
     std::pair<unsigned, unsigned> operator()(const std::pair<unsigned, unsigned>& pair) const;
+    Permutation get_inverse_permutation() const;
 };
 
 #endif

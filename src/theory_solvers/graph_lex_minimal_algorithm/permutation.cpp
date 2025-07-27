@@ -28,3 +28,12 @@ unsigned Permutation::operator()(unsigned x) const {
 std::pair<unsigned, unsigned> Permutation::operator()(const std::pair<unsigned, unsigned>& pair) const {
     return {permuted_elements[pair.first], permuted_elements[pair.second]};
 }
+
+Permutation Permutation::get_inverse_permutation() const {
+    std::vector<unsigned> inverse(num_elements);
+    for (unsigned i = 0; i < permuted_elements.size(); i++) {
+        inverse[permuted_elements[i]] = i;
+    }
+    return Permutation(inverse);
+}
+
