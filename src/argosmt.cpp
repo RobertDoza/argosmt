@@ -44,15 +44,17 @@ int main(int argc, char ** argv)
 
   cmd_line_parser::input() >> smt_lib_api;
   
-  attribute_value * avalue = smt_lib_api.get_info(keyword(":all-statistics"));
+  // attribute_value * avalue = smt_lib_api.get_info(keyword(":all-statistics"));
 
+  /*
   if(avalue)
     {
       avalue->print_value(std::cout);
       std::cout << std::endl;
     }
+    */
   
-  sl.print_reports(std::cout);
+  // sl.print_reports(std::cout);
   
   return 0;
 }
