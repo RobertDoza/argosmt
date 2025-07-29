@@ -2,8 +2,11 @@ PointerAlignment: Left
 TabWidth: 4
 IndentWidth: 4
 UseTab: Never
-ColumnLimit: 120
+ColumnLimit: 200
 BinPackParameters: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AccessModifierOffset: -4
+NamespaceIndentation: All
+IndentPPDirectives: BeforeHash
+AllowShortFunctionsOnASingleLine: None
 
