@@ -124,3 +124,25 @@ void graph_lex_minimal_constraint_handler::check_implied() {
     // DO NOTHING
 }
 
+std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_symbol_string) {
+    const std::string prefix = "edge_";
+    size_t prefix_len = prefix.length();
+
+    if (edge_symbol_string.compare(0, prefix_len, prefix) != 0) {
+        throw std::invalid_argument("String must start with 'edge_'");
+    }
+
+    size_t sep_pos = edge_symbol_string.find('_', prefix_len);
+    if (sep_pos == std::string::npos) {
+        throw std::invalid_argument("Invalid format: expected two indices separated by '_'");
+    }
+
+    std::string i_str = edge_symbol_string.substr(prefix_len, sep_pos - prefix_len);
+    std::string j_str = edge_symbol_string.substr(sep_pos + 1);
+
+    unsigned i = static_cast<unsigned>(std::stoul(i_str));
+    unsigned j = static_cast<unsigned>(std::stoul(j_str));
+
+    return {i, j};
+}
+
