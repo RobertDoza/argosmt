@@ -27,6 +27,7 @@ private:
 };
 
 std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_symbol_string);
+unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string);
 
 #endif // _GRAPH_LEX_MINIMAL_CONSTRAINT_HANDLER_H
 

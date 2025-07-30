@@ -146,3 +146,29 @@ std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_s
     return {i, j};
 }
 
+unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string) {
+    constexpr const char* error_msg = "Invalid format: expected '(_ graph_lex_minimal n)'";
+
+    if (symbol_string.empty() || symbol_string.front() != '(' || symbol_string.back() != ')') {
+        throw std::invalid_argument(error_msg);
+    }
+
+    std::string inner = symbol_string.substr(1, symbol_string.size() - 2);
+
+    std::istringstream iss(inner);
+    std::string underscore, keyword, number_str;
+
+    if (!(iss >> underscore >> keyword >> number_str)) {
+        throw std::invalid_argument(error_msg);
+    }
+
+    if (underscore != "_" || keyword != "graph_lex_minimal") {
+        throw std::invalid_argument(error_msg);
+    }
+
+    try {
+        return static_cast<unsigned>(std::stoul(number_str));
+    } catch (...) {
+        throw std::invalid_argument(error_msg);
+    }
+}
