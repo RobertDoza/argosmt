@@ -22,6 +22,8 @@ public:
     virtual bool is_weaker_from_neg(const expression& c);
     virtual void check_implied();
 private:
+    void handle_edge_literal(const expression& l);
+private:
     graph_lex_minimal_common_data* _common_data;
     sparse_backjump_stack<expression> _trail;
     unsigned _next_to_assert;

@@ -126,6 +126,78 @@ void graph_lex_minimal_constraint_handler::check_implied() {
     // DO NOTHING
 }
 
+void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression& l) {
+    auto symbol = l->get_symbol();
+    auto operands = l->get_operands();
+    auto edge_i_j = operands[0];
+    auto [i, j] = parse_edge_symbol_string(edge_i_j->to_string());
+    i--;
+    j--;
+    auto value = operands[1]->get_special_constant().get_u_value();
+
+    if (symbol == function_symbol::EQ) {
+        if (value == 0) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+        } else if (value == 1) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+        } else {
+            // TODO: ERROR
+        }
+        return;
+    }
+
+    if (symbol == function_symbol::DISTINCT) {
+        if (value == 0) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+        } else if (value == 1) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+        } else {
+            // TODO: ERROR
+        }
+        return;
+    }
+
+    if (symbol == function_symbol::GE) {
+        if (value == 1) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+        } else if (value == 0) {
+            // DO NOTHING
+        }
+        return;
+    }
+
+    if (symbol == function_symbol::LE) {
+        if (value == 0) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+        } else if (value == 1) {
+            // DO NOTHING
+        }
+        return;
+    }
+
+    if (symbol == function_symbol::GT) {
+        if (value == 0) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+        } else if (value == 1) {
+            // TODO: ERROR
+        } else {
+            // TODO: ERROR
+        }
+        return;
+    }
+
+    if (symbol == function_symbol::LT) {
+        if (value == 0) {
+            // TODO: ERROR
+        } else if (value == 1) {
+            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+        } else {
+            // TODO: ERROR
+        }
+        return;
+    }
+}
+
 std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_symbol_string) {
     const std::string prefix = "edge_";
     size_t prefix_len = prefix.length();
@@ -174,3 +246,4 @@ unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string)
         throw std::invalid_argument(error_msg);
     }
 }
+
