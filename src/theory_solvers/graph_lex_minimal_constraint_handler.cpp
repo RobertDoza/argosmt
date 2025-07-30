@@ -11,9 +11,11 @@ namespace {
 } // namespace
 
 graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_theory_solver* th, const expression& l_pos, const expression& l_neg)
-    : constraint_handler(th, l_pos, l_neg), _common_data(&th->_graph_lex_minimal_common_data), _next_to_assert(0) {
+    : constraint_handler(th, l_pos, l_neg), _common_data(&th->_graph_lex_minimal_common_data), _next_to_assert(0),
+      _adjacency_matrix(parse_graph_lex_minimal_symbol_string(l_pos->get_symbol().to_string())) {
 #ifdef GRAPH_LEX_MIN_LOG
     log_message("LexMin constraint handler constructor called");
+    log_message(_adjacency_matrix.to_string());
 #endif // GRAPH_LEX_MIN_LOG
     _common_data->_instance_count++;
     const expression_vector& ops = _constraint->get_operands();

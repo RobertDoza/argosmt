@@ -7,6 +7,7 @@
 #include "domain_handler.hpp"
 #include "hash_vector.hpp"
 #include "history_saver.hpp"
+#include "adjacency_matrix.hpp"
 
 class graph_lex_minimal_constraint_handler : public constraint_handler {
 public:
@@ -24,6 +25,7 @@ private:
     graph_lex_minimal_common_data* _common_data;
     sparse_backjump_stack<expression> _trail;
     unsigned _next_to_assert;
+    AdjacencyMatrix _adjacency_matrix;
 };
 
 std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_symbol_string);
