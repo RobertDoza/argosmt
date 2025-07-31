@@ -381,15 +381,22 @@ std::vector<EdgeLiteral> create_clause(const AdjacencyMatrix& graph, const Permu
         return false;
     };
 
+    auto orient = [](const std::pair<unsigned, unsigned>& pair) -> std::pair<unsigned, unsigned> {
+        if (pair.first > pair.second) {
+            return {pair.second, pair.first};
+        }
+        return pair;
+    };
+
     std::vector<EdgeLiteral> literals_to_return;
 
-    auto examine_pair = [&graph, &permuted_graph, &inverse_permutation, &literals_to_return](const std::pair<unsigned, unsigned>& pair) -> void {
+    auto examine_pair = [&graph, &permuted_graph, &inverse_permutation, &literals_to_return, orient](const std::pair<unsigned, unsigned>& pair) -> void {
         if (graph.get_entry(pair.first, pair.second) == AdjacencyMatrixEntry::One) {
-            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, pair});
+            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, orient(pair)});
         }
 
         if (permuted_graph.get_entry(pair.first, pair.second) == AdjacencyMatrixEntry::Zero) {
-            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, inverse_permutation(pair)});
+            literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, orient(inverse_permutation(pair))});
         }
     };
 
@@ -409,8 +416,8 @@ std::vector<EdgeLiteral> create_clause(const AdjacencyMatrix& graph, const Permu
         examine_pair({indicator_pair.first, j_prime});
     }
 
-    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, indicator_pair});
-    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, inverse_permutation(indicator_pair)});
+    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Negative, orient(indicator_pair)});
+    literals_to_return.push_back(EdgeLiteral{EdgeLiteral::Sign::Positive, orient(inverse_permutation(indicator_pair))});
 
     return literals_to_return;
 }
