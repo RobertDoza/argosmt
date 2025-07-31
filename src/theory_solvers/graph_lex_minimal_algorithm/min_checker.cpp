@@ -4,6 +4,8 @@
 
 #include "min_checker.hpp"
 
+// #define MIN_CHECK_DEBUG
+
 namespace {
     template <typename T>
     std::unordered_set<T> create_union(const std::unordered_set<T>& set_1, const std::unordered_set<T>& set_2) {
@@ -14,6 +16,14 @@ namespace {
         }
 
         return result;
+    }
+
+    #ifdef MIN_CHECK_DEBUG
+    void log(const std::string& message, unsigned indentation_level) {
+        for (unsigned i = 0; i < indentation_level; i++) {
+            std::cout << "|" << "\t";
+        }
+        std::cout << message << std::flush;
     }
 
     std::string unordered_set_to_string(const std::unordered_set<unsigned>& set) {
@@ -45,6 +55,7 @@ namespace {
         s += "}";
         return s;
     }
+    #endif // MIN_CHECK_DEBUG
 }
 
 std::optional<MinCheckReturnValue> MinChecker::check_minimality(const AdjacencyMatrix& graph_matrix) {
@@ -61,37 +72,37 @@ std::optional<MinCheckReturnValue> MinChecker::check_minimality() {
 }
 
 std::optional<MinCheckReturnValue> MinChecker::min_check(const GeneralOrderedPartition& p, unsigned r) {
-    #ifdef LOG
+    #ifdef MIN_CHECK_DEBUG
     log("MinCheck call: P = " + p.to_string() + ", r = " + std::to_string(r) + "\n", r);
-    #endif
+    #endif // MIN_CHECK_DEBUG
 
     if (r == _n - 1) {
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("MinCheck over (indicator pair not found)\n", r);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         return {};
     }
 
     std::unordered_set<unsigned> v_r = p.get_triple(r).vertices;
     for (unsigned v : v_r) {
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("try v = " + std::to_string(v) + " - begin\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         std::optional<MinCheckReturnValue> ret = try_vertex(v, p, r);
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("try v = " + std::to_string(v) + " - end\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         if (ret.has_value()) {
-            #ifdef LOG
+            #ifdef MIN_CHECK_DEBUG
             log("MinCheck over (indicator pair found)\n", r);
-            #endif
+            #endif // MIN_CHECK_DEBUG
             return ret.value();
         }
     }
 
-    #ifdef LOG
+    #ifdef MIN_CHECK_DEBUG
     log("MinCheck over (indicator pair not found)\n", r);
-    #endif
+    #endif // MIN_CHECK_DEBUG
     return {};
 }
 
@@ -106,14 +117,14 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
     V_r_without_v.erase(v);
 
     // split V_r
-    #ifdef LOG
+    #ifdef MIN_CHECK_DEBUG
     log("Splitting V_r into " + PartitionTriple({{v}, l_r, l_r}).to_string() + " & "
     + PartitionTriple{V_r_without_v, l_r + 1, u_r}.to_string() + "\n", r + 1);
-    #endif
+    #endif // MIN_CHECK_DEBUG
     p_v.split_triple(r, {{v}, l_r, l_r}, {V_r_without_v, l_r + 1, u_r});
-    #ifdef LOG
+    #ifdef MIN_CHECK_DEBUG
     log("P_v = " + p_v.to_string() + "\n", r + 1);
-    #endif
+    #endif // MIN_CHECK_DEBUG
 
     // TODO: don't copy entire vector, just the part we need
     std::vector<PartitionTriple> triples_to_split = p_v.get_triples();
@@ -123,9 +134,9 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
         unsigned l_i = triple.lower;
         unsigned u_i = triple.upper;
 
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("current triple: " + triple.to_string() + "\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
 
         std::unordered_set<unsigned> v_i_zero;
         std::unordered_set<unsigned> v_i_one;
@@ -147,62 +158,62 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
             }
         }
 
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("ViZero: " + unordered_set_to_string(v_i_zero) + "\n", r + 1);
         log("ViOne: " + unordered_set_to_string(v_i_one) + "\n", r + 1);
         log("ViStar: " + unordered_set_to_string(v_i_star) + "\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
 
         // step 1
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("step 1\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         PartitionTriple new_triple_1 = {v_i_zero, l_i, l_i + (unsigned)v_i_zero.size() - 1};
         PartitionTriple new_triple_2 = {create_union<unsigned>(v_i_star, v_i_one), l_i + (unsigned)v_i_zero.size(), u_i};
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("Splitting triple " + triple.to_string() + " into " + new_triple_1.to_string() + " & " + new_triple_2.to_string() + "\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         p_v.split_triple(triple, new_triple_1, new_triple_2);
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("P_v after step 1 (splitting): " + p_v.to_string() + "\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
 
         // step 2
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("step 2\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         std::set<unsigned> J;
         for (unsigned u = l_i; u < l_i + v_i_zero.size(); u++) {
             if (_g.get_entry(r, u) != AdjacencyMatrixEntry::Zero) {
                 J.insert(u);
             }
         }
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("J = " + set_to_string(J) + "\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
 
         if (!J.empty()) {
             unsigned j = *J.begin();
-            #ifdef LOG
+            #ifdef MIN_CHECK_DEBUG
             log("j = " + std::to_string(j) + "\n", r + 1);
-            #endif
+            #endif // MIN_CHECK_DEBUG
             return {MinCheckReturnValue{p_v.current_permutation(), {r, j}}};
         }
 
         // step 3
-        #ifdef LOG
+        #ifdef MIN_CHECK_DEBUG
         log("step 3\n", r + 1);
-        #endif
+        #endif // MIN_CHECK_DEBUG
         for (std::size_t p = l_i + v_i_zero.size(); p <= u_i; p++) {
-            #ifdef LOG
+            #ifdef MIN_CHECK_DEBUG
             log("p = " + std::to_string(p) + "\n", r + 1);
-            #endif
+            #endif // MIN_CHECK_DEBUG
             switch (_g.get_entry(r, p)) {
                 // case a
                 case AdjacencyMatrixEntry::Star: {
-                    #ifdef LOG
+                    #ifdef MIN_CHECK_DEBUG
                     log("A_G[r][p] = *\n", r + 1);
-                    #endif
+                    #endif // MIN_CHECK_DEBUG
                     if (v == r && v_i_star.find(p) != v_i_star.end()) {
                         auto new_set = v_i_star;
                         new_set.erase(p);
@@ -210,13 +221,13 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
                         auto old_triple = PartitionTriple{create_union<unsigned>(v_i_star, v_i_one), p, u_i};
                         auto new_triple_1 = PartitionTriple{{(unsigned)p}, p, p};
                         auto new_triple_2 = PartitionTriple{new_set, p + 1, u_i};
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("splitting " + old_triple.to_string() + " into " + new_triple_1.to_string() + " & " + new_triple_2.to_string() + "\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         p_v.split_triple(old_triple, new_triple_1, new_triple_2);
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("P_v after splitting: " + p_v.to_string() + "\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         v_i_star.erase(p);
                     } else if (v == p && v_i_star.find(r) != v_i_star.end()) {
                         auto new_set = v_i_star;
@@ -225,13 +236,13 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
                         auto old_triple = PartitionTriple{create_union<unsigned>(v_i_star, v_i_one), p, u_i};
                         auto new_triple_1 = PartitionTriple{{r}, p, p};
                         auto new_triple_2 = PartitionTriple{new_set, p + 1, u_i};
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("splitting " + old_triple.to_string() + " into " + new_triple_1.to_string() + " & " + new_triple_2.to_string() + "\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         p_v.split_triple(old_triple, new_triple_1, new_triple_2);
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("P_v after splitting: " + p_v.to_string() + "\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         v_i_star.erase(r);
                     } else {
                         return {};
@@ -240,43 +251,43 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
                 }
                 // case b
                 case AdjacencyMatrixEntry::Zero:
-                    #ifdef LOG
+                    #ifdef MIN_CHECK_DEBUG
                     log("A_G[r][p] = 0\n", r + 1);
                     log("returning nil.\n", r + 1);
-                    #endif
+                    #endif // MIN_CHECK_DEBUG
                     return {};
                 // case c
                 case AdjacencyMatrixEntry::One:
-                    #ifdef LOG
+                    #ifdef MIN_CHECK_DEBUG
                     log("A_G[r][p] = 1\n", r + 1);
-                    #endif
+                    #endif // MIN_CHECK_DEBUG
                     if (!v_i_star.empty()) {
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("ViStar is not empty.\n", r + 1);
                         log("splitting triple: " + PartitionTriple{create_union<unsigned>(v_i_star, v_i_one), p, u_i}.to_string() + "\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         p_v.split_triple(
                             PartitionTriple{create_union<unsigned>(v_i_star, v_i_one), p, u_i},
                             PartitionTriple{v_i_star, p, p + v_i_star.size() - 1},
                             PartitionTriple{v_i_one, p + v_i_star.size(), u_i}
                         );
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("P_v after splitting: " + p_v.to_string() + "\n", r + 1);
                         log("returning indicator pair: (" + std::to_string(r) + ", " + std::to_string(p) + ")\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         return {MinCheckReturnValue{p_v.current_permutation(), {r, p}}};
                     } else {
-                        #ifdef LOG
+                        #ifdef MIN_CHECK_DEBUG
                         log("ViStar is empty.\n", r + 1);
-                        #endif
+                        #endif // MIN_CHECK_DEBUG
                         for (auto p_prime = p; p_prime <= u_i; p_prime++) {
-                            #ifdef LOG
+                            #ifdef MIN_CHECK_DEBUG
                             log("p_prime = " + std::to_string(p_prime) + "\n", r + 1);
-                            #endif
+                            #endif // MIN_CHECK_DEBUG
                             if (_g.get_entry(r, p_prime) != AdjacencyMatrixEntry::One) {
-                                #ifdef LOG
+                                #ifdef MIN_CHECK_DEBUG
                                 log("returning nil.\n", r + 1);
-                                #endif
+                                #endif // MIN_CHECK_DEBUG
                                 return {};
                             }
                         }
@@ -292,13 +303,6 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
     p_v.check_correctness();
 
     return min_check(p_v, r + 1);
-}
-
-void MinChecker::log(const std::string& message, unsigned indentation_level) const {
-    for (unsigned i = 0; i < indentation_level; i++) {
-        std::cout << "|" << "\t";
-    }
-    std::cout << message << std::flush;
 }
 
 bool is_critical(const std::pair<unsigned, unsigned>& vertex_pair, const AdjacencyMatrix& G, const Permutation& p) {

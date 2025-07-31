@@ -8,8 +8,6 @@
 #include "general_ordered_partition.hpp"
 #include "edge_literal.hpp"
 
-#define LOG
-
 struct MinCheckReturnValue {
     Permutation p;
     std::pair<unsigned, unsigned> indicator_pair;
@@ -20,7 +18,6 @@ class MinChecker {
         static std::optional<MinCheckReturnValue> check_minimality(const AdjacencyMatrix& graph_matrix);
     public:
         MinChecker(const AdjacencyMatrix& g);
-        void log(const std::string& message, unsigned indentation_level = 0) const;
     private:
         std::optional<MinCheckReturnValue> check_minimality();
         std::optional<MinCheckReturnValue> min_check(const GeneralOrderedPartition& p, unsigned r);
