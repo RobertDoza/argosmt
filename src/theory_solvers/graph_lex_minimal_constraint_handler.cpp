@@ -198,15 +198,15 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     }
 }
 
-std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_symbol_string) {
+std::pair<std::size_t, std::size_t> parse_edge_symbol_string(const std::string& edge_symbol_string) {
     const std::string prefix = "edge_";
-    size_t prefix_len = prefix.length();
+    std::size_t prefix_len = prefix.length();
 
     if (edge_symbol_string.compare(0, prefix_len, prefix) != 0) {
-        throw std::invalid_argument("String must start with 'edge_'");
+        throw std::invalid_argument("Invalid format: expected prefix 'edge_'");
     }
 
-    size_t sep_pos = edge_symbol_string.find('_', prefix_len);
+    std::size_t sep_pos = edge_symbol_string.find('_', prefix_len);
     if (sep_pos == std::string::npos) {
         throw std::invalid_argument("Invalid format: expected two indices separated by '_'");
     }
@@ -214,10 +214,13 @@ std::pair<unsigned, unsigned> parse_edge_symbol_string(const std::string& edge_s
     std::string i_str = edge_symbol_string.substr(prefix_len, sep_pos - prefix_len);
     std::string j_str = edge_symbol_string.substr(sep_pos + 1);
 
-    unsigned i = static_cast<unsigned>(std::stoul(i_str));
-    unsigned j = static_cast<unsigned>(std::stoul(j_str));
-
-    return {i, j};
+    try {
+        std::size_t i = std::stoull(i_str);
+        std::size_t j = std::stoull(j_str);
+        return {i, j};
+    } catch (...) {
+        throw std::invalid_argument("Invalid format: indices must be non-negative integers");
+    }
 }
 
 unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string) {
