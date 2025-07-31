@@ -11,60 +11,12 @@
 
 class LiteralToVertexPairMap {
     public:
-        LiteralToVertexPairMap(const expression_vector& expressions)
-            :_map(parse_expressions(expressions))
-        {}
-        std::pair<std::size_t, std::size_t> get_vertices(const expression& expr) const {
-            auto it = _map.find(expr);
-            if (it == _map.end()) {
-                throw std::runtime_error("Expression not found in map");
-            }
-
-            return it->second;
-        }
-        std::string to_string() const {
-            std::stringstream sstr;
-            for (auto &[expr, pair] : _map) {
-                sstr << expr->to_string() << " -> " << pair.first << " " << pair.second << std::endl;
-            }
-            return sstr.str();
-        }
+        LiteralToVertexPairMap(const expression_vector& expressions);
+        std::pair<std::size_t, std::size_t> get_vertices(const expression& expr) const;
+        std::string to_string() const;
     private:
-        static std::map<expression, std::pair<std::size_t, std::size_t>> parse_expressions(const expression_vector& expressions) {
-            if (expressions == EMPTY_EXPRESSION_VECTOR) {
-                throw std::runtime_error("Empty expression vector");
-            }
-
-            std::map<expression, std::pair<std::size_t, std::size_t>> result;
-            for (expression expr : expressions) {
-                result[expr] = parse_edge_symbol_string(expr->to_string());
-            }
-            return result;
-        }
-        static std::pair<std::size_t, std::size_t> parse_edge_symbol_string(const std::string& edge_symbol_string) {
-            const std::string prefix = "edge_";
-            std::size_t prefix_len = prefix.length();
-
-            if (edge_symbol_string.compare(0, prefix_len, prefix) != 0) {
-                throw std::invalid_argument("Invalid format: expected prefix 'edge_'");
-            }
-
-            std::size_t sep_pos = edge_symbol_string.find('_', prefix_len);
-            if (sep_pos == std::string::npos) {
-                throw std::invalid_argument("Invalid format: expected two indices separated by '_'");
-            }
-
-            std::string i_str = edge_symbol_string.substr(prefix_len, sep_pos - prefix_len);
-            std::string j_str = edge_symbol_string.substr(sep_pos + 1);
-
-            try {
-                std::size_t i = std::stoull(i_str);
-                std::size_t j = std::stoull(j_str);
-                return {i, j};
-            } catch (...) {
-                throw std::invalid_argument("Invalid format: indices must be non-negative integers");
-            }
-        }
+        static std::map<expression, std::pair<std::size_t, std::size_t>> parse_expressions(const expression_vector& expressions);
+        static std::pair<std::size_t, std::size_t> parse_edge_symbol_string(const std::string& edge_symbol_string);
     private:
         std::map<expression, std::pair<std::size_t, std::size_t>> _map;
 };
