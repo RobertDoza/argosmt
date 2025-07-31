@@ -42,10 +42,27 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
 #ifdef GRAPH_LEX_MIN_LOG
     log_message("LexMin constraint handler backjump() called");
 #endif // GRAPH_LEX_MIN_LOG
+
+#ifdef GRAPH_LEX_MIN_LOG
+    std::stringstream message_before_backjump;
+    message_before_backjump << "Before backjump: " << std::endl;
+    _trail.out(message_before_backjump);
+    message_before_backjump << std::endl;
+    log_message(message_before_backjump.str());
+#endif // GRAPH_LEX_MIN_LOG
+
     assert(level < _trail.current_level());
     _trail.backjump(level);
     _next_to_assert = _trail.size();
     // TODO
+
+#ifdef GRAPH_LEX_MIN_LOG
+    std::stringstream message_after_backjump;
+    message_after_backjump << "After backjump: " << std::endl;
+    _trail.out(message_after_backjump);
+    message_after_backjump << std::endl;
+    log_message(message_after_backjump.str());
+#endif // GRAPH_LEX_MIN_LOG
 }
 
 void graph_lex_minimal_constraint_handler::assert_literal(const expression& l) {
