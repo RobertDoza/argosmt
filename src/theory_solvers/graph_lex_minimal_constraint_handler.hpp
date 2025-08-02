@@ -41,6 +41,7 @@ private:
     unsigned _next_to_assert;
     AdjacencyMatrix _adjacency_matrix;
     const LiteralToVertexPairMap _literal_to_vertex_pair_map;
+    std::map<std::pair<std::size_t, std::size_t>, expression> _responsibility_map;
 };
 
 #endif // _GRAPH_LEX_MINIMAL_CONSTRAINT_HANDLER_H

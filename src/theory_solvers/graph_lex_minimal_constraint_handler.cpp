@@ -160,8 +160,10 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     if (symbol == function_symbol::EQ) {
         if (value == 0) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
         }
@@ -171,8 +173,10 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     if (symbol == function_symbol::DISTINCT) {
         if (value == 0) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
         }
@@ -182,6 +186,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     if (symbol == function_symbol::GE) {
         if (value == 1) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _responsibility_map[{i, j}] = l;
         } else if (value == 0) {
             // DO NOTHING
         }
@@ -191,6 +196,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     if (symbol == function_symbol::LE) {
         if (value == 0) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             // DO NOTHING
         }
@@ -200,6 +206,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     if (symbol == function_symbol::GT) {
         if (value == 0) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             // TODO: ERROR
         } else {
@@ -213,6 +220,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
             // TODO: ERROR
         } else if (value == 1) {
             _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
         }
