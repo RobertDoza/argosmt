@@ -64,6 +64,7 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
     _trail.backjump(level);
     _next_to_assert = _trail.size();
     // TODO
+    _graph_state.backjump(level);
 
 #ifdef GRAPH_LEX_MIN_LOG
     std::stringstream message_after_backjump;
