@@ -39,6 +39,10 @@ AdjacencyMatrixEntry AdjacencyMatrix::get_entry(std::size_t i, std::size_t j) co
     return _entries[i][j];
 }
 
+AdjacencyMatrixEntry AdjacencyMatrix::get_entry(const std::pair<std::size_t, std::size_t>& vertex_pair) const {
+    return _entries[vertex_pair.first][vertex_pair.second];
+}
+
 std::size_t AdjacencyMatrix::get_dimension() const {
     return _dimension;
 }

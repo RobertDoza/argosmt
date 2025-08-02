@@ -13,6 +13,7 @@ class AdjacencyMatrix {
         AdjacencyMatrix(const std::vector<std::vector<unsigned>>& entries);
         AdjacencyMatrix(std::size_t dim);
         AdjacencyMatrixEntry get_entry(std::size_t i, std::size_t j) const;
+        AdjacencyMatrixEntry get_entry(const std::pair<std::size_t, std::size_t>& vertex_pair) const;
         std::size_t get_dimension() const;
         std::string to_string() const;
         bool is_lexicographically_less(const AdjacencyMatrix& other) const;
