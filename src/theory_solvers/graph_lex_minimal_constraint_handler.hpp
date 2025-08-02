@@ -9,6 +9,30 @@
 #include "history_saver.hpp"
 #include "adjacency_matrix.hpp"
 
+class GraphState {
+    struct EdgeChangeAction {
+        std::size_t row;
+        std::size_t column;
+        AdjacencyMatrixEntry old_value;
+        AdjacencyMatrixEntry new_value;
+
+        std::string to_string() const;
+    };
+    public:
+        GraphState(std::size_t num_vertices);
+        void new_level();
+        void set_entry(std::size_t row, std::size_t column, AdjacencyMatrixEntry new_value);
+        AdjacencyMatrixEntry get_entry(std::size_t i, std::size_t j) const;
+        AdjacencyMatrix get_adjacency_matrix() const;
+        void backjump(std::size_t level);
+        std::string to_string() const;
+    private:
+        void execute_reverse_edge_change_action(const EdgeChangeAction& edge_change_action);
+    private:
+        std::vector<std::vector<EdgeChangeAction>> _action_history;
+        AdjacencyMatrix _adjacency_matrix;
+};
+
 class LiteralToVertexPairMap {
     public:
         LiteralToVertexPairMap(const expression_vector& expressions);

@@ -285,3 +285,73 @@ std::pair<std::size_t, std::size_t> LiteralToVertexPairMap::parse_edge_symbol_st
     }
 }
 
+std::string GraphState::EdgeChangeAction::to_string() const {
+    return "(" + std::to_string(row) + ", " + std::to_string(column) + "): " + value_char(old_value) + " --> " + value_char(new_value);
+}
+
+GraphState::GraphState(std::size_t num_vertices)
+    :_adjacency_matrix(num_vertices)
+{}
+
+void GraphState::new_level() {
+    _action_history.push_back(std::vector<EdgeChangeAction>());
+}
+
+void GraphState::set_entry(std::size_t row, std::size_t column, AdjacencyMatrixEntry new_value) {
+    AdjacencyMatrixEntry old_value = _adjacency_matrix.get_entry(row, column);
+    if (old_value == new_value) {
+        return;
+    }
+    _adjacency_matrix.set_entry(row, column, new_value);
+    _action_history.back().push_back(EdgeChangeAction{row, column, old_value, new_value});
+}
+
+AdjacencyMatrixEntry GraphState::get_entry(std::size_t i, std::size_t j) const {
+    return _adjacency_matrix.get_entry(i, j);
+}
+
+AdjacencyMatrix GraphState::get_adjacency_matrix() const {
+    return _adjacency_matrix;
+}
+
+void GraphState::backjump(std::size_t level) {
+    std::size_t current_level = _action_history.size() - 1;
+    assert(level < current_level);
+    while (level != current_level) {
+        while (!_action_history.back().empty()) {
+            const EdgeChangeAction& action = _action_history.back().back();
+            execute_reverse_edge_change_action(action);
+            _action_history.back().pop_back();
+        }
+        _action_history.pop_back();
+        current_level--;
+    }
+}
+
+std::string GraphState::to_string() const {
+    std::stringstream s;
+    if (_action_history.empty()) {
+        s << "<no actions>" << std::endl;
+    } else {
+        for (const auto& level : _action_history) {
+            for (const auto& action : level) {
+                s << action.to_string() << " ";
+            }
+            s << std::endl;
+        }
+    }
+    s << _adjacency_matrix.to_string();
+    return s.str();
+}
+
+void GraphState::execute_reverse_edge_change_action(const EdgeChangeAction& edge_change_action) {
+    std::size_t row = edge_change_action.row;
+    std::size_t column = edge_change_action.column;
+    AdjacencyMatrixEntry old_value = edge_change_action.old_value;
+    AdjacencyMatrixEntry new_value = edge_change_action.new_value;
+    if (_adjacency_matrix.get_entry(row, column) != new_value) {
+        throw std::runtime_error("Action is irreversible");
+    }
+    _adjacency_matrix.set_entry(row, column, old_value);
+}
+
