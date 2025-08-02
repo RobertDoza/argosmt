@@ -12,7 +12,7 @@ namespace {
 
 graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_theory_solver* th, const expression& l_pos, const expression& l_neg)
     : constraint_handler(th, l_pos, l_neg), _common_data(&th->_graph_lex_minimal_common_data), _next_to_assert(0),
-      _adjacency_matrix(parse_graph_lex_minimal_symbol_string(l_pos->get_symbol().to_string())),
+      _adjacency_matrix(l_pos->get_symbol().get_indices()[0].get_unsigned_value()),
       _literal_to_vertex_pair_map(l_pos->get_operands()) {
 #ifdef GRAPH_LEX_MIN_LOG
     log_message("LexMin constraint handler constructor called");
@@ -217,33 +217,6 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
             // TODO: ERROR
         }
         return;
-    }
-}
-
-unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string) {
-    constexpr const char* error_msg = "Invalid format: expected '(_ graph_lex_minimal n)'";
-
-    if (symbol_string.empty() || symbol_string.front() != '(' || symbol_string.back() != ')') {
-        throw std::invalid_argument(error_msg);
-    }
-
-    std::string inner = symbol_string.substr(1, symbol_string.size() - 2);
-
-    std::istringstream iss(inner);
-    std::string underscore, keyword, number_str;
-
-    if (!(iss >> underscore >> keyword >> number_str)) {
-        throw std::invalid_argument(error_msg);
-    }
-
-    if (underscore != "_" || keyword != "graph_lex_minimal") {
-        throw std::invalid_argument(error_msg);
-    }
-
-    try {
-        return static_cast<unsigned>(std::stoul(number_str));
-    } catch (...) {
-        throw std::invalid_argument(error_msg);
     }
 }
 

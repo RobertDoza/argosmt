@@ -43,7 +43,5 @@ private:
     const LiteralToVertexPairMap _literal_to_vertex_pair_map;
 };
 
-unsigned parse_graph_lex_minimal_symbol_string(const std::string& symbol_string);
-
 #endif // _GRAPH_LEX_MINIMAL_CONSTRAINT_HANDLER_H
 
