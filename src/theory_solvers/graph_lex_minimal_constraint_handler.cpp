@@ -41,6 +41,10 @@ void graph_lex_minimal_constraint_handler::new_level() {
 #endif // GRAPH_LEX_MIN_LOG
     _trail.new_level();
     // TODO
+    _graph_state.new_level();
+#ifdef GRAPH_LEX_MIN_LOG
+    log_message(_graph_state.to_string());
+#endif // GRAPH_LEX_MIN_LOG
 }
 
 void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
