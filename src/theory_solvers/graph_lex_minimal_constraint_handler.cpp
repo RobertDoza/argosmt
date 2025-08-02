@@ -12,11 +12,11 @@ namespace {
 
 graph_lex_minimal_constraint_handler::graph_lex_minimal_constraint_handler(csp_theory_solver* th, const expression& l_pos, const expression& l_neg)
     : constraint_handler(th, l_pos, l_neg), _common_data(&th->_graph_lex_minimal_common_data), _next_to_assert(0),
-      _adjacency_matrix(l_pos->get_symbol().get_indices()[0].get_unsigned_value()),
+      _graph_state(l_pos->get_symbol().get_indices()[0].get_unsigned_value()),
       _literal_to_vertex_pair_map(l_pos->get_operands()) {
 #ifdef GRAPH_LEX_MIN_LOG
     log_message("LexMin constraint handler constructor called");
-    log_message(_adjacency_matrix.to_string());
+    log_message(_graph_state.to_string());
 #endif // GRAPH_LEX_MIN_LOG
     _common_data->_instance_count++;
     const expression_vector& ops = _constraint->get_operands();
@@ -159,10 +159,10 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
 
     if (symbol == function_symbol::EQ) {
         if (value == 0) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::Zero);
             _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::One);
             _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
@@ -172,10 +172,10 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
 
     if (symbol == function_symbol::DISTINCT) {
         if (value == 0) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::One);
             _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::Zero);
             _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
@@ -185,7 +185,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
 
     if (symbol == function_symbol::GE) {
         if (value == 1) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::One);
             _responsibility_map[{i, j}] = l;
         } else if (value == 0) {
             // DO NOTHING
@@ -195,7 +195,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
 
     if (symbol == function_symbol::LE) {
         if (value == 0) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::Zero);
             _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             // DO NOTHING
@@ -205,7 +205,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
 
     if (symbol == function_symbol::GT) {
         if (value == 0) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::One);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::One);
             _responsibility_map[{i, j}] = l;
         } else if (value == 1) {
             // TODO: ERROR
@@ -219,7 +219,7 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
         if (value == 0) {
             // TODO: ERROR
         } else if (value == 1) {
-            _adjacency_matrix.set_entry(i, j, AdjacencyMatrixEntry::Zero);
+            _graph_state.set_entry(i, j, AdjacencyMatrixEntry::Zero);
             _responsibility_map[{i, j}] = l;
         } else {
             // TODO: ERROR
