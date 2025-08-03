@@ -13,6 +13,7 @@ struct PartitionTriple {
     bool operator==(const PartitionTriple& other) const;
     void check_correctness() const;
     bool is_empty() const;
+    friend std::ostream& operator<<(std::ostream& out, const PartitionTriple& triple);
 };
 
 #endif

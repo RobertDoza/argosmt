@@ -8,3 +8,8 @@ std::string EdgeLiteral::to_string() const {
     return str;
 }
 
+std::ostream& operator<<(std::ostream& out, const EdgeLiteral& edge_literal) {
+    out << edge_literal.to_string();
+    return out;
+}
+

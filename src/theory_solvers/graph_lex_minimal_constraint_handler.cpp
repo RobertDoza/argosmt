@@ -247,7 +247,7 @@ std::pair<std::size_t, std::size_t> LiteralToVertexPairMap::get_vertices(const e
 std::string LiteralToVertexPairMap::to_string() const {
     std::stringstream buffer;
     for (auto &[expr, pair] : _map) {
-        buffer << expr->to_string() << " -> " << pair.first << " " << pair.second << std::endl;
+        buffer << expr << " -> " << pair.first << " " << pair.second << std::endl;
     }
     return buffer.str();
 }
@@ -339,12 +339,12 @@ std::string GraphState::to_string() const {
     } else {
         for (const auto& level : _action_history) {
             for (const auto& action : level) {
-                buffer << action.to_string() << " ";
+                buffer << action << " ";
             }
             buffer << std::endl;
         }
     }
-    buffer << _adjacency_matrix.to_string();
+    buffer << _adjacency_matrix;
     return buffer.str();
 }
 
@@ -359,3 +359,17 @@ void GraphState::execute_reverse_edge_change_action(const EdgeChangeAction& edge
     _adjacency_matrix.set_entry(row, column, old_value);
 }
 
+std::ostream& operator<<(std::ostream& out, const GraphState::EdgeChangeAction& action) {
+    out << action.to_string();
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const GraphState& graph_state) {
+    out << graph_state.to_string();
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const LiteralToVertexPairMap& map) {
+    out << map.to_string();
+    return out;
+}

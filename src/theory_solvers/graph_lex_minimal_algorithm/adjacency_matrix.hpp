@@ -20,6 +20,7 @@ class AdjacencyMatrix {
         AdjacencyMatrix permute(const std::vector<unsigned>& permutation) const;
         AdjacencyMatrix permute(const Permutation& permutation) const;
         void set_entry(std::size_t i, std::size_t j, AdjacencyMatrixEntry entry);
+        friend std::ostream& operator<<(std::ostream& out, const AdjacencyMatrix& matrix);
     private:
         void clear_diagonal();
         void check_symmetry() const;

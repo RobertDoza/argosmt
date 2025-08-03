@@ -37,3 +37,8 @@ Permutation Permutation::get_inverse_permutation() const {
     return Permutation(inverse);
 }
 
+std::ostream& operator<<(std::ostream& out, const Permutation& permutation) {
+    out << permutation.to_string();
+    return out;
+}
+

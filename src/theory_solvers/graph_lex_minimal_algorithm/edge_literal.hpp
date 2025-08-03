@@ -12,6 +12,7 @@ struct EdgeLiteral {
     std::pair<unsigned, unsigned> vertex_pair;
 
     std::string to_string() const;
+    friend std::ostream& operator<<(std::ostream& out, const EdgeLiteral& edge_literal);
 };
 
 #endif

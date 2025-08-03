@@ -26,6 +26,8 @@ class GraphState {
         AdjacencyMatrix get_adjacency_matrix() const;
         void backjump(std::size_t level);
         std::string to_string() const;
+        friend std::ostream& operator<<(std::ostream& out, const GraphState& graph_state);
+        friend std::ostream& operator<<(std::ostream& out, const GraphState::EdgeChangeAction& action);
     private:
         void execute_reverse_edge_change_action(const EdgeChangeAction& edge_change_action);
     private:
@@ -38,6 +40,7 @@ class LiteralToVertexPairMap {
         LiteralToVertexPairMap(const expression_vector& expressions);
         std::pair<std::size_t, std::size_t> get_vertices(const expression& expr) const;
         std::string to_string() const;
+        friend std::ostream& operator<<(std::ostream& out, const LiteralToVertexPairMap& map);
     private:
         static std::map<expression, std::pair<std::size_t, std::size_t>> parse_expressions(const expression_vector& expressions);
         static std::pair<std::size_t, std::size_t> parse_edge_symbol_string(const std::string& edge_symbol_string);

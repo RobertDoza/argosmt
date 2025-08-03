@@ -31,3 +31,7 @@ bool PartitionTriple::is_empty() const {
     return vertices.empty();
 }
 
+std::ostream& operator<<(std::ostream& out, const PartitionTriple& triple) {
+    out << triple.to_string();
+    return out;
+}

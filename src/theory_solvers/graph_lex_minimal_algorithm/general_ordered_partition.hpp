@@ -19,6 +19,7 @@ class GeneralOrderedPartition {
         void split_triple(std::size_t index, const PartitionTriple& new_triple_1, const PartitionTriple& new_triple_2);
         void split_triple(const PartitionTriple& target_triple, const PartitionTriple& new_triple_1, const PartitionTriple& new_triple_2);
         void check_correctness() const;
+        friend std::ostream& operator<<(std::ostream& out, const GeneralOrderedPartition& gop);
     private:
         std::size_t _num_vertices;
         std::vector<PartitionTriple> _triples;

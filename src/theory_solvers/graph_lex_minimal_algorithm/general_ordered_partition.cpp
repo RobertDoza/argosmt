@@ -106,3 +106,8 @@ void GeneralOrderedPartition::check_correctness() const {
     }
 }
 
+std::ostream& operator<<(std::ostream& out, const GeneralOrderedPartition& gop) {
+    out << gop.to_string();
+    return out;
+}
+

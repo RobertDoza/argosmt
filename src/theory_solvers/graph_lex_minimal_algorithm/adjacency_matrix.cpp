@@ -116,3 +116,8 @@ void AdjacencyMatrix::check_symmetry() const {
     }
 }
 
+std::ostream& operator<<(std::ostream& out, const AdjacencyMatrix& matrix) {
+    out << matrix.to_string();
+    return out;
+}
+

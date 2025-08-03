@@ -15,6 +15,7 @@ struct Permutation {
     unsigned operator()(unsigned x) const;
     std::pair<unsigned, unsigned> operator()(const std::pair<unsigned, unsigned>& pair) const;
     Permutation get_inverse_permutation() const;
+    friend std::ostream& operator<<(std::ostream& out, const Permutation& permutation);
 };
 
 #endif
