@@ -436,18 +436,37 @@ void GraphState::backjump(std::size_t level) {
     }
 }
 
-std::string GraphState::to_string() const {
-    std::stringstream buffer;
+std::string GraphState::action_history_to_string() const {
     if (_action_history.empty()) {
-        buffer << "<no actions>" << std::endl;
-    } else {
-        for (const auto& level : _action_history) {
-            for (const auto& action : level) {
-                buffer << action << " ";
-            }
+        return "<no actions>";
+    }
+
+    std::stringstream buffer;
+    for (std::size_t level = 0; level < _action_history.size(); level++) {
+        if (level != 0) {
             buffer << std::endl;
         }
+
+        buffer << "Level " << level << ": ";
+        if (_action_history[level].empty()) {
+            buffer << "<no actions>" << std::endl;
+            continue;
+        }
+
+        for (std::size_t i = 0; i < _action_history[level].size(); i++) {
+            if (i != 0) {
+                buffer << ", ";
+            }
+            buffer << "[" << _action_history[level][i] << "]";
+        }
     }
+
+    return buffer.str();
+}
+
+std::string GraphState::to_string() const {
+    std::stringstream buffer;
+    buffer << action_history_to_string() << std::endl;
     buffer << _adjacency_matrix;
     return buffer.str();
 }

@@ -30,6 +30,7 @@ class GraphState {
         friend std::ostream& operator<<(std::ostream& out, const GraphState::EdgeChangeAction& action);
     private:
         void execute_reverse_edge_change_action(const EdgeChangeAction& edge_change_action);
+        std::string action_history_to_string() const;
     private:
         std::vector<std::vector<EdgeChangeAction>> _action_history;
         AdjacencyMatrix _adjacency_matrix;
