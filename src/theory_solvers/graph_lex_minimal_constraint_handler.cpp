@@ -1,4 +1,5 @@
 #include "graph_lex_minimal_constraint_handler.hpp"
+#include "min_checker.hpp"
 
 #define GRAPH_LEX_MIN_LOG
 
@@ -111,7 +112,110 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
         return;
     }
 
-    // TODO
+#ifdef GRAPH_LEX_MIN_LOG
+    log_buffer << "All literals on trail: " << std::endl;
+    _trail.out(log_buffer);
+    log_message(log_buffer.str());
+#endif // GRAPH_LEX_MIN_LOG
+
+#ifdef GRAPH_LEX_MIN_LOG
+#endif // GRAPH_LEX_MIN_LOG
+
+    #ifdef GRAPH_LEX_MIN_LOG
+    log_message("Handling literals...");
+    #endif // GRAPH_LEX_MIN_LOG
+    for (unsigned i = _next_to_assert; i < _trail.size(); i++) {
+        handle_edge_literal(_trail[i]);
+        #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer << "handled literal " << _trail[i] << std::endl;
+        log_buffer << _graph_state;
+        log_message(log_buffer.str());
+        #endif // GRAPH_LEX_MIN_LOG
+    }
+    #ifdef GRAPH_LEX_MIN_LOG
+    log_message("Handled all literals.");
+    #endif // GRAPH_LEX_MIN_LOG
+
+    #ifdef GRAPH_LEX_MIN_LOG
+    log_buffer << "Responsibility map: " << std::endl;
+    for (auto [pair, expression] : _responsibility_map) {
+        log_buffer << "(" << pair.first << ", " << pair.second << ") --> " << expression << std::endl;
+    }
+    log_message(log_buffer.str());
+    #endif // GRAPH_LEX_MIN_LOG
+
+    std::optional<MinCheckReturnValue> min_check_return_value = MinChecker::check_minimality(_graph_state.get_adjacency_matrix());
+    if (min_check_return_value.has_value()) {
+        #ifdef GRAPH_LEX_MIN_LOG
+        log_message("MinCheck algorithm returned indicator pair!");
+        #endif // GRAPH_LEX_MIN_LOG
+
+        auto [permutation, indicator_pair] = min_check_return_value.value();
+        #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer << "Matrix: " << std::endl << _graph_state.get_adjacency_matrix();
+        log_buffer << "Permutation: " << permutation << std::endl;
+        log_buffer << "Permuted matrix: " << std::endl << _graph_state.get_adjacency_matrix().permute(permutation);
+        log_buffer << "Indicator pair: " << "(" << indicator_pair.first << ", " << indicator_pair.second << ")";
+        log_message(log_buffer.str());
+        #endif // GRAPH_LEX_MIN_LOG
+
+        auto clause = create_clause(_graph_state.get_adjacency_matrix(), permutation, indicator_pair);
+        #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer << "Created clause: ";
+        for (auto literal : clause) {
+            log_buffer << literal << " ";
+        }
+        log_message(log_buffer.str());
+        #endif // GRAPH_LEX_MIN_LOG
+
+        #ifdef GRAPH_LEX_MIN_LOG
+        log_message("Analyzing created clause...");
+        #endif // GRAPH_LEX_MIN_LOG
+
+        bool all_literals_false = true;
+        for (auto literal : clause) {
+            EdgeLiteral::Sign sign = literal.sign;
+            std::pair<std::size_t, std::size_t> vertex_pair = literal.vertex_pair;
+            AdjacencyMatrixEntry entry_in_matrix = _graph_state.get_adjacency_matrix().get_entry(vertex_pair);
+            if (entry_in_matrix == AdjacencyMatrixEntry::One && sign == EdgeLiteral::Sign::Negative) {
+                // this literal is false
+            } else if (entry_in_matrix == AdjacencyMatrixEntry::Zero && sign == EdgeLiteral::Sign::Positive) {
+                // this literal is false
+            } else {
+                // we don't know if this literal is false
+                all_literals_false = false;
+            }
+        }
+
+        if (all_literals_false) {
+            #ifdef GRAPH_LEX_MIN_LOG
+            log_message("All literals false --> creating conflict set...");
+            #endif // GRAPH_LEX_MIN_LOG
+
+            explanation expl;
+
+            for (auto literal : clause) {
+                expression expression_to_add = _responsibility_map[literal.vertex_pair];
+                #ifdef GRAPH_LEX_MIN_LOG
+                log_buffer << "Because of " << literal << ", should add: " << std::flush;
+                log_buffer << expression_to_add;
+                log_message(log_buffer.str());
+                #endif // GRAPH_LEX_MIN_LOG
+                expl.push_back(expression_to_add);
+            }
+
+            #ifdef GRAPH_LEX_MIN_LOG
+            log_message("Applying conflict...");
+            #endif // GRAPH_LEX_MIN_LOG;
+            _theory_solver->get_solver().apply_conflict(expl, _theory_solver);
+        } else {
+            #ifdef GRAPH_LEX_MIN_LOG
+            log_message("Not all literals are false");
+            #endif // GRAPH_LEX_MIN_LOG
+        }
+    }
+
+    _next_to_assert = _trail.size();
 }
 
 void graph_lex_minimal_constraint_handler::explain_literal(const expression& l) {
