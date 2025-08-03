@@ -7,6 +7,7 @@ namespace {
     void log_message(const std::string& msg) {
         std::cout << msg << std::endl;
     }
+    std::stringstream log_buffer;
 #endif // GRAPH_LEX_MIN_LOG
 } // namespace
 
@@ -53,11 +54,10 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
 #endif // GRAPH_LEX_MIN_LOG
 
 #ifdef GRAPH_LEX_MIN_LOG
-    std::stringstream message_before_backjump;
-    message_before_backjump << "Before backjump: " << std::endl;
-    _trail.out(message_before_backjump);
-    message_before_backjump << std::endl;
-    log_message(message_before_backjump.str());
+    log_buffer << "Before backjump: " << std::endl;
+    _trail.out(log_buffer);
+    log_buffer << std::endl;
+    log_message(log_buffer.str());
 #endif // GRAPH_LEX_MIN_LOG
 
     assert(level < _trail.current_level());
@@ -67,11 +67,10 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
     _graph_state.backjump(level);
 
 #ifdef GRAPH_LEX_MIN_LOG
-    std::stringstream message_after_backjump;
-    message_after_backjump << "After backjump: " << std::endl;
-    _trail.out(message_after_backjump);
-    message_after_backjump << std::endl;
-    log_message(message_after_backjump.str());
+    log_buffer << "After backjump: " << std::endl;
+    _trail.out(log_buffer);
+    log_buffer << std::endl;
+    log_message(log_buffer.str());
 #endif // GRAPH_LEX_MIN_LOG
 }
 
