@@ -45,7 +45,11 @@ void graph_lex_minimal_constraint_handler::new_level() {
     // TODO
     _graph_state.new_level();
 #ifdef GRAPH_LEX_MIN_LOG
-    log_message(_graph_state.to_string());
+    log_buffer.str("");
+    log_buffer.clear();
+    log_buffer << "graph state:" << std::endl;
+    log_buffer << _graph_state;
+    log_message(log_buffer.str());
 #endif // GRAPH_LEX_MIN_LOG
 }
 
@@ -55,6 +59,8 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
 #endif // GRAPH_LEX_MIN_LOG
 
 #ifdef GRAPH_LEX_MIN_LOG
+    log_buffer.str("");
+    log_buffer.clear();
     log_buffer << "Before backjump: " << std::endl;
     _trail.out(log_buffer);
     log_buffer << std::endl;
@@ -68,6 +74,8 @@ void graph_lex_minimal_constraint_handler::backjump(unsigned level) {
     _graph_state.backjump(level);
 
 #ifdef GRAPH_LEX_MIN_LOG
+    log_buffer.str("");
+    log_buffer.clear();
     log_buffer << "After backjump: " << std::endl;
     _trail.out(log_buffer);
     log_buffer << std::endl;
@@ -113,12 +121,11 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     }
 
 #ifdef GRAPH_LEX_MIN_LOG
+    log_buffer.str("");
+    log_buffer.clear();
     log_buffer << "All literals on trail: " << std::endl;
     _trail.out(log_buffer);
     log_message(log_buffer.str());
-#endif // GRAPH_LEX_MIN_LOG
-
-#ifdef GRAPH_LEX_MIN_LOG
 #endif // GRAPH_LEX_MIN_LOG
 
     #ifdef GRAPH_LEX_MIN_LOG
@@ -127,6 +134,8 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     for (unsigned i = _next_to_assert; i < _trail.size(); i++) {
         handle_edge_literal(_trail[i]);
         #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer.str("");
+        log_buffer.clear();
         log_buffer << "handled literal " << _trail[i] << std::endl;
         log_buffer << _graph_state;
         log_message(log_buffer.str());
@@ -137,6 +146,8 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     #endif // GRAPH_LEX_MIN_LOG
 
     #ifdef GRAPH_LEX_MIN_LOG
+    log_buffer.str("");
+    log_buffer.clear();
     log_buffer << "Responsibility map: " << std::endl;
     for (auto [pair, expression] : _responsibility_map) {
         log_buffer << "(" << pair.first << ", " << pair.second << ") --> " << expression << std::endl;
@@ -152,6 +163,8 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
         auto [permutation, indicator_pair] = min_check_return_value.value();
         #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer.str("");
+        log_buffer.clear();
         log_buffer << "Matrix: " << std::endl << _graph_state.get_adjacency_matrix();
         log_buffer << "Permutation: " << permutation << std::endl;
         log_buffer << "Permuted matrix: " << std::endl << _graph_state.get_adjacency_matrix().permute(permutation);
@@ -161,6 +174,8 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
         auto clause = create_clause(_graph_state.get_adjacency_matrix(), permutation, indicator_pair);
         #ifdef GRAPH_LEX_MIN_LOG
+        log_buffer.str("");
+        log_buffer.clear();
         log_buffer << "Created clause: ";
         for (auto literal : clause) {
             log_buffer << literal << " ";
@@ -197,6 +212,8 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             for (auto literal : clause) {
                 expression expression_to_add = _responsibility_map[literal.vertex_pair];
                 #ifdef GRAPH_LEX_MIN_LOG
+                log_buffer.str("");
+                log_buffer.clear();
                 log_buffer << "Because of " << literal << ", should add: " << std::flush;
                 log_buffer << expression_to_add;
                 log_message(log_buffer.str());
