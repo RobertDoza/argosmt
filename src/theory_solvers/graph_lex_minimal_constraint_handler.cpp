@@ -1,7 +1,7 @@
 #include "graph_lex_minimal_constraint_handler.hpp"
 #include "min_checker.hpp"
 
-#define GRAPH_LEX_MIN_LOG
+// #define GRAPH_LEX_MIN_LOG
 
 namespace {
 #ifdef GRAPH_LEX_MIN_LOG
