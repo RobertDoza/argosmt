@@ -18,6 +18,17 @@ namespace {
         return result;
     }
 
+    template <typename T>
+    std::set<T> create_union(const std::set<T>& set_1, const std::set<T>& set_2) {
+        std::set<T> result = set_1;
+
+        for (const auto& elem : set_2) {
+            result.insert(elem);
+        }
+
+        return result;
+    }
+
     #ifdef MIN_CHECK_DEBUG
     void log(const std::string& message, unsigned indentation_level) {
         for (unsigned i = 0; i < indentation_level; i++) {
