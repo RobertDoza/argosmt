@@ -188,6 +188,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
         #endif // GRAPH_LEX_MIN_LOG
 
         bool all_literals_false = true;
+        unsigned num_literals_not_false = 0;
         for (auto literal : clause) {
             EdgeLiteral::Sign sign = literal.sign;
             std::pair<std::size_t, std::size_t> vertex_pair = literal.vertex_pair;
@@ -199,6 +200,10 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             } else {
                 // we don't know if this literal is false
                 all_literals_false = false;
+                num_literals_not_false++;
+                if (num_literals_not_false >= 2) {
+                    throw std::runtime_error("TWO OR MORE LITERALS NOT FALSE");
+                }
             }
         }
 
