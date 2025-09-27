@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <set>
+#include <unordered_set>
 #include <iostream>
 
 #include "min_checker.hpp"
@@ -94,7 +95,7 @@ std::optional<MinCheckReturnValue> MinChecker::min_check(const GeneralOrderedPar
         return {};
     }
 
-    std::unordered_set<unsigned> v_r = p.get_triple(r).vertices;
+    std::set<unsigned> v_r = p.get_triple(r).vertices;
     for (unsigned v : v_r) {
         #ifdef MIN_CHECK_DEBUG
         log("try v = " + std::to_string(v) + " - begin\n", r + 1);
@@ -149,9 +150,9 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
         log("current triple: " + triple.to_string() + "\n", r + 1);
         #endif // MIN_CHECK_DEBUG
 
-        std::unordered_set<unsigned> v_i_zero;
-        std::unordered_set<unsigned> v_i_one;
-        std::unordered_set<unsigned> v_i_star;
+        std::set<unsigned> v_i_zero;
+        std::set<unsigned> v_i_one;
+        std::set<unsigned> v_i_star;
 
         for (unsigned u : triple.vertices) {
             switch (_g.get_entry(v, u)) {
@@ -170,9 +171,9 @@ std::optional<MinCheckReturnValue> MinChecker::try_vertex(unsigned v, const Gene
         }
 
         #ifdef MIN_CHECK_DEBUG
-        log("ViZero: " + unordered_set_to_string(v_i_zero) + "\n", r + 1);
-        log("ViOne: " + unordered_set_to_string(v_i_one) + "\n", r + 1);
-        log("ViStar: " + unordered_set_to_string(v_i_star) + "\n", r + 1);
+        log("ViZero: " + set_to_string(v_i_zero) + "\n", r + 1);
+        log("ViOne: " + set_to_string(v_i_one) + "\n", r + 1);
+        log("ViStar: " + set_to_string(v_i_star) + "\n", r + 1);
         #endif // MIN_CHECK_DEBUG
 
         // step 1

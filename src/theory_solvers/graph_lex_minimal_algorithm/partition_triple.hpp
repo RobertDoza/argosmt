@@ -1,11 +1,11 @@
 #ifndef __PARTITION_TRIPLE_HPP__
 #define __PARTITION_TRIPLE_HPP__
 
-#include <unordered_set>
 #include <string>
+#include <set>
 
 struct PartitionTriple {
-    std::unordered_set<unsigned> vertices;
+    std::set<unsigned> vertices;
     std::size_t lower;
     std::size_t upper;
 

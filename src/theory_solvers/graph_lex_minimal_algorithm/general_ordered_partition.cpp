@@ -6,7 +6,7 @@
 GeneralOrderedPartition::GeneralOrderedPartition(std::size_t n)
     :_num_vertices(n)
 {
-    std::unordered_set<unsigned> all_vertices(n);
+    std::set<unsigned> all_vertices;
     for (unsigned i = 0; i < n; ++i) {
         all_vertices.insert(i);
     }
