@@ -358,6 +358,26 @@ void graph_lex_minimal_constraint_handler::handle_edge_literal(const expression&
     }
 }
 
+expression graph_lex_minimal_constraint_handler::edge_literal_to_expression(const EdgeLiteral& literal) {
+    int i = literal.vertex_pair.first + 1;
+    int j = literal.vertex_pair.second + 1;
+    function_symbol fs(std::string("edge_") + std::to_string(i) + std::string("_") + std::to_string(j));
+    expression edge = _theory_solver->get_solver().get_factory()->create_expression(fs);
+
+    csp_theory_solver::csp_theory_solver_data * data = _theory_solver->get_theory_solver_data(edge);
+    domain_handler * d_handler = data->get_variable_domain_handler();
+
+    if (literal.sign == EdgeLiteral::Sign::Positive) {
+        d_handler->init_literal_pair(1, true);
+        return d_handler->get_equality(1);
+    } else if (literal.sign == EdgeLiteral::Sign::Negative) {
+        d_handler->init_literal_pair(1, true);
+        return d_handler->get_equality(0);
+    }
+
+    throw std::runtime_error("Unviable EdgeLiteral sign");
+}
+
 LiteralToVertexPairMap::LiteralToVertexPairMap(const expression_vector& expressions)
     :_map(parse_expressions(expressions))
 {}

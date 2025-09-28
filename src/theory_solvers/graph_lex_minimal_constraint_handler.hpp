@@ -8,6 +8,7 @@
 #include "hash_vector.hpp"
 #include "history_saver.hpp"
 #include "adjacency_matrix.hpp"
+#include "edge_literal.hpp"
 
 class GraphState {
     struct EdgeChangeAction {
@@ -63,6 +64,7 @@ public:
     virtual void check_implied();
 private:
     void handle_edge_literal(const expression& l);
+    expression edge_literal_to_expression(const EdgeLiteral& literal);
 private:
     graph_lex_minimal_common_data* _common_data;
     sparse_backjump_stack<expression> _trail;
