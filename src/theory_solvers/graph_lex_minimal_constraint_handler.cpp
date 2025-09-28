@@ -94,6 +94,9 @@ void graph_lex_minimal_constraint_handler::assert_literal(const expression& l) {
         _theory_solver->get_theory_solver_data(l)->get_explanation_handler() != this) {
         _trail.push(l);
     }
+#ifdef GRAPH_LEX_MIN_LOG
+    log_message("End of assert_literal()");
+#endif // GRAPH_LEX_MIN_LOG
 }
 
 void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
