@@ -232,8 +232,45 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             _theory_solver->get_solver().apply_conflict(expl, _theory_solver);
         } else {
             #ifdef GRAPH_LEX_MIN_LOG
-            log_message("Not all literals are false");
+            log_message("Not all literals are false --> propagating literal...");
             #endif // GRAPH_LEX_MIN_LOG
+
+            expression l;
+
+            for (auto literal : clause) {
+                EdgeLiteral::Sign sign = literal.sign;
+                std::pair<std::size_t, std::size_t> vertex_pair = literal.vertex_pair;
+                AdjacencyMatrixEntry entry_in_matrix = _graph_state.get_adjacency_matrix().get_entry(vertex_pair);
+                if (entry_in_matrix == AdjacencyMatrixEntry::One && sign == EdgeLiteral::Sign::Negative) {
+                    // this literal is false
+                } else if (entry_in_matrix == AdjacencyMatrixEntry::Zero && sign == EdgeLiteral::Sign::Positive) {
+                    // this literal is false
+                } else {
+                    // this literal must be true
+
+                    // TODO: create expression that corresponds to this literal
+                    #ifdef GRAPH_LEX_MIN_LOG
+                    log_buffer.str("");
+                    log_buffer.clear();
+                    log_buffer << "literal: " << std::flush;
+                    log_buffer << literal;
+                    log_message(log_buffer.str());
+                    #endif // GRAPH_LEX_MIN_LOG;
+
+                    l = edge_literal_to_expression(literal);
+                    std::cout << "to propagate: " << l << std::endl;
+
+                    break;
+                }
+            }
+
+            #ifdef GRAPH_LEX_MIN_LOG
+            log_message("Propagating...");
+            #endif // GRAPH_LEX_MIN_LOG;
+            _theory_solver->get_solver().apply_propagate(l, _theory_solver);
+            #ifdef GRAPH_LEX_MIN_LOG
+            log_message("Propagation successful.");
+            #endif // GRAPH_LEX_MIN_LOG;
         }
     }
 
