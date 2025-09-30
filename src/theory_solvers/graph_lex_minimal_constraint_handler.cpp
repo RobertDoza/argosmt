@@ -317,7 +317,7 @@ void graph_lex_minimal_constraint_handler::explain_literal(const expression& l) 
 #ifdef GRAPH_LEX_MIN_LOG
     log_message("LexMin constraint handler explain_literal() called");
 #endif // GRAPH_LEX_MIN_LOG
-       // TODO
+    _theory_solver->get_solver().apply_explain(l, _propagation_explanations[l]);
 }
 
 int graph_lex_minimal_constraint_handler::get_variable_value_hint(const expression& var) {
