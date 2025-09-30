@@ -192,7 +192,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
         bool all_literals_false = true;
         unsigned num_literals_not_false = 0;
-        for (auto literal : clause) {
+        for (const EdgeLiteral& literal : clause) {
             EdgeLiteral::Sign sign = literal.sign;
             std::pair<std::size_t, std::size_t> vertex_pair = literal.vertex_pair;
             AdjacencyMatrixEntry entry_in_matrix = _graph_state.get_adjacency_matrix().get_entry(vertex_pair);
@@ -217,7 +217,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
             explanation expl;
 
-            for (auto literal : clause) {
+            for (const EdgeLiteral& literal : clause) {
                 expression expression_to_add = _responsibility_map[literal.vertex_pair];
                 #ifdef GRAPH_LEX_MIN_LOG
                 log_buffer.str("");
@@ -239,8 +239,9 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             #endif // GRAPH_LEX_MIN_LOG
 
             expression l;
+            EdgeLiteral literal_to_propagate;
 
-            for (auto literal : clause) {
+            for (const EdgeLiteral& literal : clause) {
                 EdgeLiteral::Sign sign = literal.sign;
                 std::pair<std::size_t, std::size_t> vertex_pair = literal.vertex_pair;
                 AdjacencyMatrixEntry entry_in_matrix = _graph_state.get_adjacency_matrix().get_entry(vertex_pair);
@@ -251,7 +252,6 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                 } else {
                     // this literal must be true
 
-                    // TODO: create expression that corresponds to this literal
                     #ifdef GRAPH_LEX_MIN_LOG
                     log_buffer.str("");
                     log_buffer.clear();
@@ -261,7 +261,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                     #endif // GRAPH_LEX_MIN_LOG;
 
                     l = edge_literal_to_expression(literal);
-                    std::cout << "to propagate: " << l << std::endl;
+                    literal_to_propagate = literal;
 
                     break;
                 }
@@ -270,10 +270,33 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             #ifdef GRAPH_LEX_MIN_LOG
             log_message("Propagating...");
             #endif // GRAPH_LEX_MIN_LOG;
-            _theory_solver->get_solver().apply_propagate(l, _theory_solver);
-            #ifdef GRAPH_LEX_MIN_LOG
-            log_message("Propagation successful.");
-            #endif // GRAPH_LEX_MIN_LOG;
+
+            extended_boolean l_value = _theory_solver->get_solver().get_trail().get_value(l);
+
+            if(l_value == EB_UNDEFINED) {
+                _theory_solver->get_theory_solver_data(l)->set_explanation_handler(this);
+                _theory_solver->get_solver().apply_propagate(l, _theory_solver);
+                #ifdef GRAPH_LEX_MIN_LOG
+                log_message("Propagation successful.");
+                #endif // GRAPH_LEX_MIN_LOG;
+            } else if(l_value == EB_FALSE) {
+                // GENERATE EXPLANATION FOR L
+                // ADD ~L TO THAT EXPLANATION TO OBTAIN CONFLICT EXPL.
+                // APPLY CONFLICT WITH THAT EXPLANATION
+
+                explanation conflicting;
+                for (EdgeLiteral literal : clause) {
+                    if (literal != literal_to_propagate) {
+                        continue;
+                    }
+                    expression expression_to_add = _responsibility_map[literal.vertex_pair];
+                    conflicting.push_back(expression_to_add);
+                }
+
+                expression l_opp = _theory_solver->get_solver().get_literal_data(l)->get_opposite();
+                conflicting.push_back(l_opp);
+                _theory_solver->get_solver().apply_conflict(conflicting, _theory_solver);
+            }
         }
     }
 
@@ -405,13 +428,14 @@ expression graph_lex_minimal_constraint_handler::edge_literal_to_expression(cons
     expression edge = _theory_solver->get_solver().get_factory()->create_expression(fs);
 
     csp_theory_solver::csp_theory_solver_data * data = _theory_solver->get_theory_solver_data(edge);
+
     domain_handler * d_handler = data->get_variable_domain_handler();
 
     if (literal.sign == EdgeLiteral::Sign::Positive) {
         d_handler->init_literal_pair(1, true);
         return d_handler->get_equality(1);
     } else if (literal.sign == EdgeLiteral::Sign::Negative) {
-        d_handler->init_literal_pair(1, true);
+        d_handler->init_literal_pair(0, true);
         return d_handler->get_equality(0);
     }
 
