@@ -73,6 +73,7 @@ private:
     GraphState _graph_state;
     const LiteralToVertexPairMap _literal_to_vertex_pair_map;
     std::map<std::pair<std::size_t, std::size_t>, expression> _responsibility_map;
+    std::map<expression, explanation> _propagation_explanations;
 };
 
 #endif // _GRAPH_LEX_MINIMAL_CONSTRAINT_HANDLER_H

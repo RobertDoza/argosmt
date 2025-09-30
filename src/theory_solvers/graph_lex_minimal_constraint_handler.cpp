@@ -226,7 +226,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                 log_buffer << expression_to_add;
                 log_message(log_buffer.str());
                 #endif // GRAPH_LEX_MIN_LOG
-                expl.push_back(expression_to_add);
+                expl.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
             }
 
             #ifdef GRAPH_LEX_MIN_LOG
@@ -251,38 +251,45 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                     // this literal is false
                 } else {
                     // this literal must be true
-
-                    #ifdef GRAPH_LEX_MIN_LOG
-                    log_buffer.str("");
-                    log_buffer.clear();
-                    log_buffer << "literal: " << std::flush;
-                    log_buffer << literal;
-                    log_message(log_buffer.str());
-                    #endif // GRAPH_LEX_MIN_LOG;
-
                     l = edge_literal_to_expression(literal);
                     literal_to_propagate = literal;
-
                     break;
                 }
             }
 
             #ifdef GRAPH_LEX_MIN_LOG
-            log_message("Propagating...");
+            log_message("Propagating literal (EdgeLiteral form): " + literal_to_propagate.to_string());
+            log_message("Propagating literal (expression form): " + l->to_string());
             #endif // GRAPH_LEX_MIN_LOG;
 
             extended_boolean l_value = _theory_solver->get_solver().get_trail().get_value(l);
 
             if(l_value == EB_UNDEFINED) {
+                #ifdef GRAPH_LEX_MIN_LOG
+                log_message("Literal undefined on trail. Generating & applying propagation...");
+                #endif // GRAPH_LEX_MIN_LOG;
+
                 _theory_solver->get_theory_solver_data(l)->set_explanation_handler(this);
                 _theory_solver->get_solver().apply_propagate(l, _theory_solver);
+
+                explanation propagation_explanation;
+                for (EdgeLiteral literal : clause) {
+                    if (literal == literal_to_propagate) {
+                        continue;
+                    }
+
+                    expression expression_to_add = _responsibility_map[literal.vertex_pair];
+                    propagation_explanation.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
+                }
+
+                _propagation_explanations[l] = propagation_explanation;
                 #ifdef GRAPH_LEX_MIN_LOG
-                log_message("Propagation successful.");
+                log_message("Propagation applied.");
                 #endif // GRAPH_LEX_MIN_LOG;
             } else if(l_value == EB_FALSE) {
-                // GENERATE EXPLANATION FOR L
-                // ADD ~L TO THAT EXPLANATION TO OBTAIN CONFLICT EXPL.
-                // APPLY CONFLICT WITH THAT EXPLANATION
+                #ifdef GRAPH_LEX_MIN_LOG
+                log_message("Literal false on trail. Generating & applying conflict...");
+                #endif // GRAPH_LEX_MIN_LOG;
 
                 explanation conflicting;
                 for (EdgeLiteral literal : clause) {
@@ -290,12 +297,15 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                         continue;
                     }
                     expression expression_to_add = _responsibility_map[literal.vertex_pair];
-                    conflicting.push_back(expression_to_add);
+                    conflicting.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
                 }
 
                 expression l_opp = _theory_solver->get_solver().get_literal_data(l)->get_opposite();
                 conflicting.push_back(l_opp);
                 _theory_solver->get_solver().apply_conflict(conflicting, _theory_solver);
+                #ifdef GRAPH_LEX_MIN_LOG
+                log_message("Conflict applied.");
+                #endif // GRAPH_LEX_MIN_LOG;
             }
         }
     }
