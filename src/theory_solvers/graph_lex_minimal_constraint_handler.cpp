@@ -442,6 +442,11 @@ expression graph_lex_minimal_constraint_handler::edge_literal_to_expression(cons
     throw std::runtime_error("Unviable EdgeLiteral sign");
 }
 
+explanation graph_lex_minimal_constraint_handler::generate_propagation_explanation(const expression& l) {
+    // TODO
+    return explanation();
+}
+
 LiteralToVertexPairMap::LiteralToVertexPairMap(const expression_vector& expressions)
     :_map(parse_expressions(expressions))
 {}

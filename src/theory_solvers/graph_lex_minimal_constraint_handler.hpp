@@ -65,6 +65,7 @@ public:
 private:
     void handle_edge_literal(const expression& l);
     expression edge_literal_to_expression(const EdgeLiteral& literal);
+    explanation generate_propagation_explanation(const expression& l);
 private:
     graph_lex_minimal_common_data* _common_data;
     sparse_backjump_stack<expression> _trail;
