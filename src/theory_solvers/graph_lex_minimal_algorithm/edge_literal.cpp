@@ -13,3 +13,10 @@ std::ostream& operator<<(std::ostream& out, const EdgeLiteral& edge_literal) {
     return out;
 }
 
+bool operator==(const EdgeLiteral& lhs, const EdgeLiteral& rhs) {
+    return lhs.sign == rhs.sign && lhs.vertex_pair == rhs.vertex_pair;
+}
+
+bool operator!=(const EdgeLiteral& lhs, const EdgeLiteral& rhs) {
+    return !(lhs == rhs);
+}

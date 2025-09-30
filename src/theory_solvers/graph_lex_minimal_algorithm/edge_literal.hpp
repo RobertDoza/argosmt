@@ -15,5 +15,8 @@ struct EdgeLiteral {
     friend std::ostream& operator<<(std::ostream& out, const EdgeLiteral& edge_literal);
 };
 
+bool operator==(const EdgeLiteral& lhs, const EdgeLiteral& rhs);
+bool operator!=(const EdgeLiteral& lhs, const EdgeLiteral& rhs);
+
 #endif
 
