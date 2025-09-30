@@ -52,7 +52,7 @@ int main(int argc, char ** argv)
       std::cout << std::endl;
     }
   
-  sl.print_reports(std::cout);
+  // sl.print_reports(std::cout);
   
   return 0;
 }

@@ -281,6 +281,9 @@ check_sat_response argosmt_solver_interface::check_sat()
   attr.insert(attribute(":solving-time", elapsed));
   _smt_lib_api->set_info(keyword::ALL_STATISTICS, attr);
   _smt_lib_api->pop();
+
+  print_reports(std::cout);
+
   return csr;
 }
   
