@@ -152,7 +152,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     log_buffer.str("");
     log_buffer.clear();
     log_buffer << "Responsibility map: " << std::endl;
-    for (auto [pair, expression] : _responsibility_map) {
+    for (const auto & [pair, expression] : _responsibility_map) {
         log_buffer << "(" << pair.first << ", " << pair.second << ") --> " << expression << std::endl;
     }
     log_message(log_buffer.str());
@@ -164,7 +164,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
         log_message("MinCheck algorithm returned indicator pair!");
         #endif // GRAPH_LEX_MIN_LOG
 
-        auto [permutation, indicator_pair] = min_check_return_value.value();
+        const auto & [permutation, indicator_pair] = min_check_return_value.value();
         #ifdef GRAPH_LEX_MIN_LOG
         log_buffer.str("");
         log_buffer.clear();
@@ -226,7 +226,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                 log_buffer << expression_to_add;
                 log_message(log_buffer.str());
                 #endif // GRAPH_LEX_MIN_LOG
-                expl.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
+                expl.push_back(expression_to_add);
             }
 
             #ifdef GRAPH_LEX_MIN_LOG
@@ -279,7 +279,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                     }
 
                     expression expression_to_add = _responsibility_map[literal.vertex_pair];
-                    propagation_explanation.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
+                    propagation_explanation.push_back(expression_to_add);
                 }
 
                 _propagation_explanations[l] = propagation_explanation;
@@ -293,11 +293,11 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
                 explanation conflicting;
                 for (EdgeLiteral literal : clause) {
-                    if (literal != literal_to_propagate) {
+                    if (literal == literal_to_propagate) {
                         continue;
                     }
                     expression expression_to_add = _responsibility_map[literal.vertex_pair];
-                    conflicting.push_back(_theory_solver->get_solver().get_literal_data(expression_to_add)->get_opposite());
+                    conflicting.push_back(expression_to_add);
                 }
 
                 expression l_opp = _theory_solver->get_solver().get_literal_data(l)->get_opposite();
