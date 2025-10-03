@@ -159,7 +159,11 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     #endif // GRAPH_LEX_MIN_LOG
 
     std::optional<MinCheckReturnValue> min_check_return_value = MinChecker::check_minimality(_graph_state.get_adjacency_matrix());
+    _common_data->_count_min_check_calls++;
+
     if (min_check_return_value.has_value()) {
+        _common_data->_count_indicator_pairs_found++;
+
         #ifdef GRAPH_LEX_MIN_LOG
         log_message("MinCheck algorithm returned indicator pair!");
         #endif // GRAPH_LEX_MIN_LOG
