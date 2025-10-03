@@ -95,6 +95,8 @@ struct graph_lex_minimal_common_data {
   unsigned _expl_depth_count;
   double _cumulative_expl_depth;
   unsigned _instance_count;
+  unsigned _count_min_check_calls;
+  unsigned _count_indicator_pairs_found;
   graph_lex_minimal_common_data()
     :_count_propagate(0),
      _count_conflict(0),
@@ -102,7 +104,9 @@ struct graph_lex_minimal_common_data {
      _count_hall_explain(0),
      _expl_depth_count(0),
      _cumulative_expl_depth(0.0),
-     _instance_count(0)
+     _instance_count(0),
+     _count_min_check_calls(0),
+     _count_indicator_pairs_found(0)
   {}
 };
 

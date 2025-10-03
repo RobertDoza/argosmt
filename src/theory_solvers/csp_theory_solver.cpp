@@ -659,6 +659,8 @@ void csp_theory_solver::print_report(std::ostream & ostr)
     }
   ostr << "GRAPH_LEX_MINIMAL HANDLER: " << _graph_lex_minimal_common_data._count_propagate << " propagations and " <<
     _graph_lex_minimal_common_data._count_conflict << " conflicts" << std::endl;
+  ostr << _graph_lex_minimal_common_data._count_min_check_calls << " MinCheck calls and " <<
+    _graph_lex_minimal_common_data._count_indicator_pairs_found << " indicator pairs found" << std::endl;
   
 }
 
