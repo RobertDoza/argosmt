@@ -233,6 +233,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
             log_message("Applying conflict...");
             #endif // GRAPH_LEX_MIN_LOG;
             _theory_solver->get_solver().apply_conflict(expl, _theory_solver);
+            _common_data->_count_conflict++;
         } else {
             #ifdef GRAPH_LEX_MIN_LOG
             log_message("Not all literals are false --> propagating literal...");
@@ -271,6 +272,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
 
                 _theory_solver->get_theory_solver_data(l)->set_explanation_handler(this);
                 _theory_solver->get_solver().apply_propagate(l, _theory_solver);
+                _common_data->_count_propagate++;
 
                 explanation propagation_explanation;
                 for (EdgeLiteral literal : clause) {
@@ -303,6 +305,7 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
                 expression l_opp = _theory_solver->get_solver().get_literal_data(l)->get_opposite();
                 conflicting.push_back(l_opp);
                 _theory_solver->get_solver().apply_conflict(conflicting, _theory_solver);
+                _common_data->_count_conflict++;
                 #ifdef GRAPH_LEX_MIN_LOG
                 log_message("Conflict applied.");
                 #endif // GRAPH_LEX_MIN_LOG;
