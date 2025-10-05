@@ -158,7 +158,10 @@ void graph_lex_minimal_constraint_handler::check_and_propagate(unsigned layer) {
     log_message(log_buffer.str());
     #endif // GRAPH_LEX_MIN_LOG
 
+    _common_data->_time_spent_min_check.start();
     std::optional<MinCheckReturnValue> min_check_return_value = MinChecker::check_minimality(_graph_state.get_adjacency_matrix());
+    _common_data->_time_spent_min_check.acumulate();
+
     _common_data->_count_min_check_calls++;
 
     if (min_check_return_value.has_value()) {

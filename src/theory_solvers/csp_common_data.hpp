@@ -97,6 +97,7 @@ struct graph_lex_minimal_common_data {
   unsigned _instance_count;
   unsigned _count_min_check_calls;
   unsigned _count_indicator_pairs_found;
+  wall_clock _time_spent_min_check;
   graph_lex_minimal_common_data()
     :_count_propagate(0),
      _count_conflict(0),
